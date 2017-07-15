@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="WebFundamentalsHomework" />
+        <module name="CgiHomework" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="WebFundamentalsHomework" target="1.5" />
+      <module name="CgiHomework" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
