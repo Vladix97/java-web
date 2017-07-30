@@ -12,11 +12,8 @@ public class ViewBookModel {
 
     private Date creationDate;
 
-    public ViewBookModel(String title, String author, Integer pages, Date creationDate) {
-        this.setTitle(title);
-        this.setAuthor(author);
-        this.setPages(pages);
-        this.setCreationDate(creationDate);
+    public ViewBookModel() {
+        super();
     }
 
     public String getTitle() {

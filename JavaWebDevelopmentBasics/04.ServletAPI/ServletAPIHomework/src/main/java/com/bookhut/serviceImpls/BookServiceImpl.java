@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
@@ -18,10 +19,17 @@ public class BookServiceImpl implements BookService {
 
     private ModelMapper modelMapper;
 
-    @Override
-    public void saveBook(AddBookModel book) {
+    public BookServiceImpl() {
         this.bookRepository = BookRepositoryImpl.getInstance();
         this.modelMapper = new ModelMapper();
+    }
+
+    @Override
+    public void saveBook(AddBookModel book) {
+        Book b = this.modelMapper.map(book, Book.class);
+        b.setCreationDate(new Date());
+        
+        this.bookRepository.saveBook(b);
     }
 
     @Override

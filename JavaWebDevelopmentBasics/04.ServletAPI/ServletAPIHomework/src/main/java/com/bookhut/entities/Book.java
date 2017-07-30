@@ -22,8 +22,6 @@ public class Book {
         this.setTitle(title);
         this.setAuthor(author);
         this.setPages(pages);
-
-        this.setCreationDate(new Date());
     }
 
     public Long getId() {
