@@ -3,10 +3,19 @@
 <html>
 <head>
     <title>Edit Book</title>
+    <style>
+        ul li{
+            display: inline;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
 
-    <c:import url="menu.jsp"></c:import>
+    <c:import url="menu.jsp"/>
 
     <c:set var="book" value="${book}"/>
     <form method="POST">
@@ -18,5 +27,6 @@
         <input type="number" id="pages" name="pages" value="${book.getPages()}">
         <input type="submit" value="Edit Book">
     </form>
+
 </body>
 </html>
