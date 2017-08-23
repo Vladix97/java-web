@@ -35,7 +35,7 @@ public class VirusBindingModel {
 
     private Magnitude magnitude;
 
-    private Date realeasedOn;
+    private Date releasedOn;
 
     private String[] capitals;
 
@@ -63,7 +63,7 @@ public class VirusBindingModel {
         this.description = description;
     }
 
-    @Pattern(regexp = "^.*[Cc]orp.*$", message = "Doesnt contain Corp")
+    @Pattern(regexp = "^.*[Cc]orp.*$", message = "Doesn't contain Corp")
     public String getCreator() {
         return this.creator;
     }
@@ -135,12 +135,12 @@ public class VirusBindingModel {
 
     @IsInTheFuture(message = "Is in the past")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    public Date getRealeasedOn() {
-        return this.realeasedOn;
+    public Date getReleasedOn() {
+        return this.releasedOn;
     }
 
-    public void setRealeasedOn(Date realeasedOn) {
-        this.realeasedOn = realeasedOn;
+    public void setReleasedOn(Date releasedOn) {
+        this.releasedOn = releasedOn;
     }
 
     @NotEmpty(message = "Should pick capitals")

@@ -3,27 +3,42 @@ package com.residentevil.serviceImpls;
 import com.residentevil.entities.Capital;
 import com.residentevil.entities.Virus;
 import com.residentevil.models.VirusBindingModel;
+import com.residentevil.repositories.CapitalRepository;
 import com.residentevil.repositories.VirusRepository;
 import com.residentevil.services.VirusService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 
 @Service
 public class VirusServiceImpl implements VirusService {
 
+
     private final VirusRepository virusRepository;
 
+    private final CapitalRepository capitalRepository;
+
+    private final ModelMapper modelMapper;
+
     @Autowired
-    public VirusServiceImpl(VirusRepository repository) {
+    public VirusServiceImpl(VirusRepository repository, ModelMapper modelMapper, CapitalRepository capitalRepository) {
         this.virusRepository = repository;
+        this.modelMapper = modelMapper;
+        this.capitalRepository = capitalRepository;
     }
+
 
     @Override
     public void create(VirusBindingModel virusBindingModel) {
-
+        Virus virus = this.modelMapper.map(virusBindingModel, Virus.class);
+        Set<Capital> capitals = this.capitalRepository
+                .getAllByNameIn(virusBindingModel.getCapitals());
+        virus.setCapitals(capitals);
+        this.virusRepository.saveAndFlush(virus);
     }
 
     @Override

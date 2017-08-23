@@ -147,7 +147,7 @@ public class Virus {
         this.magnitude = magnitude;
     }
 
-    @Column(name = "released_on")
+//    @Column(name = "released_on")
     public Date getReleasedOn() {
         return this.releasedOn;
     }
