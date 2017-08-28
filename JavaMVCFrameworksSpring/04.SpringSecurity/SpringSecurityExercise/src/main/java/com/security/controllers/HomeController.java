@@ -10,4 +10,10 @@ public class HomeController {
     public String getHome() {
         return "home";
     }
+
+    @GetMapping("/unauthorized")
+    public String getUnauthorizedPage(){
+
+        return "unauthorized";
+    }
 }
