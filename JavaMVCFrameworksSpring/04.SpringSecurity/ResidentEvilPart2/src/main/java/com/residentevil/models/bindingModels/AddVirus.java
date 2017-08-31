@@ -1,17 +1,13 @@
-package com.residentevil.entities;
+package com.residentevil.models.bindingModels;
 
-import com.residentevil.enums.Magnitude;
-import com.residentevil.enums.Mutation;
+import com.residentevil.validations.PresentOrFuture;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.util.Date;
-import java.util.Set;
 
-@Entity
-@Table(name = "viruses")
-public class Virus {
-
-    private Long id;
+public class AddVirus {
 
     private String name;
 
@@ -25,34 +21,24 @@ public class Virus {
 
     private Boolean isCurable;
 
-    private Mutation mutation;
+    private String mutation;
 
     private Float turnoverRate;
 
     private Integer hoursUntilTurn;
 
-    private Magnitude magnitude;
+    private String magnitude;
 
     private Date releasedOn;
 
-    private Set<Capital> capitals;
+    private String[] capitals;
 
-    public Virus() {
+    public AddVirus() {
         super();
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Column(name = "name")
+    @NotNull
+    @Size(min = 3, max = 10, message = "Invalid name!")
     public String getName() {
         return this.name;
     }
@@ -61,7 +47,8 @@ public class Virus {
         this.name = name;
     }
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @NotNull
+    @Size(min = 5, max = 100, message = "Invalid description!")
     public String getDescription() {
         return this.description;
     }
@@ -70,7 +57,8 @@ public class Virus {
         this.description = description;
     }
 
-    @Column(name = "side_effects")
+    @NotNull
+    @Size(min = 50, message = "InvalidS side effects!")
     public String getSideEffects() {
         return this.sideEffects;
     }
@@ -79,7 +67,8 @@ public class Virus {
         this.sideEffects = sideEffects;
     }
 
-    @Column(name = "creator")
+    @NotNull
+    @Pattern(regexp = "^.*[Cc]orp.*$", message = "Invalid creator")
     public String getCreator() {
         return this.creator;
     }
@@ -88,7 +77,6 @@ public class Virus {
         this.creator = creator;
     }
 
-    @Column(name = "is_deadly")
     public Boolean getDeadly() {
         return this.isDeadly;
     }
@@ -97,7 +85,6 @@ public class Virus {
         isDeadly = deadly;
     }
 
-    @Column(name = "is_curable")
     public Boolean getCurable() {
         return this.isCurable;
     }
@@ -106,17 +93,17 @@ public class Virus {
         isCurable = curable;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "mutation")
-    public Mutation getMutation() {
+    @NotNull(message = "Mutation cannot be null!")
+    public String getMutation() {
         return this.mutation;
     }
 
-    public void setMutation(Mutation mutation) {
+    public void setMutation(String mutation) {
         this.mutation = mutation;
     }
 
-    @Column(name = "turnover_rate")
+    @Max(value = 100, message = "Invalid turnover rate!")
+    @Min(value = 0, message = "Invalid turnover rate!")
     public Float getTurnoverRate() {
         return this.turnoverRate;
     }
@@ -125,7 +112,8 @@ public class Virus {
         this.turnoverRate = turnoverRate;
     }
 
-    @Column(name = "hours_until_turn")
+    @Max(value = 12, message = "Invalid hours!")
+    @Min(value = 1, message = "Invalid hours!")
     public Integer getHoursUntilTurn() {
         return this.hoursUntilTurn;
     }
@@ -134,17 +122,17 @@ public class Virus {
         this.hoursUntilTurn = hoursUntilTurn;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "magnitude")
-    public Magnitude getMagnitude() {
+    @NotNull(message = "Magnitude cannot be null!")
+    public String getMagnitude() {
         return this.magnitude;
     }
 
-    public void setMagnitude(Magnitude magnitude) {
+    public void setMagnitude(String magnitude) {
         this.magnitude = magnitude;
     }
 
-    @Column(name = "released_on")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @PresentOrFuture(message = "The release date should be in a future moment!")
     public Date getReleasedOn() {
         return this.releasedOn;
     }
@@ -153,15 +141,12 @@ public class Virus {
         this.releasedOn = releasedOn;
     }
 
-    @ManyToMany
-    @JoinTable(name = "viruses_capitals",
-            joinColumns = @JoinColumn(name = "virus_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "capital_id", referencedColumnName = "id"))
-    public Set<Capital> getCapitals() {
+    @NotEmpty(message = "You must select capitals!")
+    public String[] getCapitals() {
         return this.capitals;
     }
 
-    public void setCapitals(Set<Capital> capitals) {
+    public void setCapitals(String[] capitals) {
         this.capitals = capitals;
     }
 }
