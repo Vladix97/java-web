@@ -4,6 +4,7 @@ import com.residentevil.services.VirusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MapController {
@@ -15,6 +16,7 @@ public class MapController {
         this.virusService = virusService;
     }
 
+    @GetMapping("/map")
     public String getMap(Model model) {
         String geoJson = this.virusService.findAllMapViruses();
         model.addAttribute("geoJson", geoJson);

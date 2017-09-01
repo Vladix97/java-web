@@ -43,12 +43,12 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
         joinColumns = @JoinColumn(name = "users", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "roles", referencedColumnName = "id"))
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Set<Role> getAuthorities() {
         return this.authorities;
     }
 
