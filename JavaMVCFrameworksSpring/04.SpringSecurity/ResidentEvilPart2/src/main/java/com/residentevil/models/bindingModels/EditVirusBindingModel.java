@@ -1,6 +1,7 @@
 package com.residentevil.models.bindingModels;
 
 import javax.validation.constraints.*;
+import java.util.Date;
 
 public class EditVirusBindingModel {
     private long id;
@@ -39,8 +40,14 @@ public class EditVirusBindingModel {
     @NotNull(message = "Magnitude cannot be null")
     private String magnitude;
 
+    private Date releasedOn;
+
     @Size(min = 1, message = "You must select capitals")
     private String[] capitals;
+
+    public EditVirusBindingModel() {
+        super();
+    }
 
     public long getId() {
         return id;
@@ -128,6 +135,14 @@ public class EditVirusBindingModel {
 
     public void setMagnitude(String magnitude) {
         this.magnitude = magnitude;
+    }
+
+    public Date getReleasedOn() {
+        return this.releasedOn;
+    }
+
+    public void setReleasedOn(Date releasedOn) {
+        this.releasedOn = releasedOn;
     }
 
     public String[] getCapitals() {

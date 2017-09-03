@@ -15,8 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping("/viruses")
@@ -74,6 +73,7 @@ public class VirusController {
     public String getEditVirusHomePage(@PathVariable long virusId, Model model) {
         EditVirusBindingModel editVirusBindingModel = this.virusService.findVirusById(virusId);
         model.addAttribute("editVirusBindingModel", editVirusBindingModel);
+        model.addAttribute("date", editVirusBindingModel.getReleasedOn());
         return "viruses-edit";
     }
 
@@ -82,11 +82,13 @@ public class VirusController {
             @PathVariable long virusId,
             @Valid @ModelAttribute EditVirusBindingModel editVirusBindingModel,
             BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             return "viruses-edit";
         }
 
         editVirusBindingModel.setId(virusId);
+        Date date = new Date();
+        editVirusBindingModel.setReleasedOn(new Date(date.getYear(), date.getMonth(), date.getDate() + 1));
         this.virusService.save(editVirusBindingModel);
         return "redirect:/viruses";
     }
