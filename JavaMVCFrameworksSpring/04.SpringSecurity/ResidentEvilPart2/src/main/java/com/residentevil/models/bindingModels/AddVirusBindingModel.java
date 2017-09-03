@@ -7,7 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.*;
 import java.util.Date;
 
-public class AddVirus {
+public class AddVirusBindingModel {
 
     private String name;
 
@@ -33,7 +33,7 @@ public class AddVirus {
 
     private String[] capitals;
 
-    public AddVirus() {
+    public AddVirusBindingModel() {
         super();
     }
 
