@@ -94,7 +94,7 @@ public class VirusController {
     }
 
     @GetMapping("/delete/{virusId}")
-    public String deleteVirus(@PathVariable long virusId, Model model) {
+    public String deleteVirus(@PathVariable long virusId) {
         this.virusService.deleteById(virusId);
         return "redirect:/viruses";
     }
