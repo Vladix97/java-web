@@ -2,7 +2,6 @@ package com.social.configuration;
 
 import com.social.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -18,14 +17,19 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Autowired
-    public SpringSecurityConfig(UserService userService) {
+    public SpringSecurityConfig(
+            UserService userService,
+            BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userService = userService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(this.userService).passwordEncoder(getBCryptPasswordEncoder());
+        auth.userDetailsService(this.userService).passwordEncoder(this.bCryptPasswordEncoder);
     }
 
     @Override
@@ -51,10 +55,5 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedPage("/unauthorized")
                 .and()
                 .csrf().disable();
-    }
-
-    @Bean
-    public BCryptPasswordEncoder getBCryptPasswordEncoder(){
-        return new BCryptPasswordEncoder();
     }
 }
