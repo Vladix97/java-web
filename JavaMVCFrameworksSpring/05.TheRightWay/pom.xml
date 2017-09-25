@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>social</name>
-	<description>Exercise from SoftUni Sping the right way</description>
+	<description>Exercise from SoftUni Spring the right way</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
