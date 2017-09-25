@@ -1,8 +1,9 @@
 package com.social.services;
 
+import com.social.entities.BasicUser;
 import com.social.entities.User;
 import com.social.models.bindingModels.RegistrationModel;
-import com.social.repositories.UserRepository;
+import com.social.repositories.BasicUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,9 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class BasicUserServiceImpl implements BasicUserService {
 
-    private final UserRepository userRepository;
+    private final BasicUserRepository basicUserRepository;
 
     private final RoleService roleService;
 
@@ -22,12 +23,12 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(
-            UserRepository userRepository,
+    public BasicUserServiceImpl(
+            BasicUserRepository basicUserRepository,
             BCryptPasswordEncoder bCryptPasswordEncoder,
             ModelMapper modelMapper,
             RoleService roleService) {
-        this.userRepository = userRepository;
+        this.basicUserRepository = basicUserRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.modelMapper = modelMapper;
         this.roleService = roleService;
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User byUsername = this.userRepository.findByUsername(username);
+        User byUsername = this.basicUserRepository.findByUsername(username);
         if (byUsername == null)
             throw new UsernameNotFoundException("Invalid Credentials");
 
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(RegistrationModel registrationModel) {
-        User user = this.modelMapper.map(registrationModel, User.class);
+        BasicUser user = this.modelMapper.map(registrationModel, BasicUser.class);
 
         String encryptedPassword = this.bCryptPasswordEncoder.encode(registrationModel.getPassword());
         user.setPassword(encryptedPassword);
@@ -54,6 +55,6 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(true);
         user.addRole(this.roleService.getDefaultRole());
 
-        this.userRepository.saveAndFlush(user);
+        this.basicUserRepository.saveAndFlush(user);
     }
 }

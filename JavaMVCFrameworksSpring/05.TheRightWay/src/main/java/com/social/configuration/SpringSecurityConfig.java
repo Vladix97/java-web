@@ -1,6 +1,6 @@
 package com.social.configuration;
 
-import com.social.services.UserService;
+import com.social.services.BasicUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,13 +15,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserService userService;
+    private final BasicUserService userService;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public SpringSecurityConfig(
-            UserService userService,
+            BasicUserService userService,
             BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userService = userService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -36,7 +36,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/register", "/bootstrap/**", "/jquery/**").permitAll()
+                .antMatchers("/", "/register/**", "/bootstrap/**", "/jquery/**", "/connect/**").permitAll()
                 .antMatchers("/bikes/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()

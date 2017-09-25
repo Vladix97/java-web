@@ -13,8 +13,11 @@
 <main>
 
     <div class="container">
+
         <h1>Login Page</h1>
+
         <div style="color: red" th:if="${error} != null" th:text="${error}"></div>
+
         <form method="post">
             <div class="form-group">
                 <label class="form-control-label" for="inputUsername">Username</label>
@@ -30,9 +33,15 @@
                     Remember Me
                 </label>
             </div>
+
             <input type="submit" class="btn btn-success" value="Log In"/>
-            <a href="#" type="submit" class="btn btn-primary">Facebook</a>
         </form>
+
+        <form action="/connect/facebook" method="post">
+            <input type="hidden" name="scope" value="public_profile, email, "/>
+            <input class="btn btn-primary" type="submit" value="Facebook"/>
+        </form>
+
     </div>
 
 </main>

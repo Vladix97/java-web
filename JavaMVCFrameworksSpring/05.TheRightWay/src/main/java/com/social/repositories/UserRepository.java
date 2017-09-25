@@ -2,10 +2,10 @@ package com.social.repositories;
 
 import com.social.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.NoRepositoryBean;
 
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+@NoRepositoryBean
+public interface UserRepository<T extends User> extends JpaRepository<T, Long> {
 
-    User findByUsername(String username);
+    T findByUsername(String username);
 }

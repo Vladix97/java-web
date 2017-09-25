@@ -1,0 +1,56 @@
+package com.social.services;
+
+import com.social.entities.SocialUser;
+import com.social.repositories.SocialUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.social.facebook.api.User;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SocialUserServiceImpl implements SocialUserService {
+
+    private final SocialUserRepository socialUserRepository;
+
+    private final RoleService roleService;
+
+    @Autowired
+    public SocialUserServiceImpl(
+            SocialUserRepository socialUserRepository,
+            RoleService roleService) {
+        this.socialUserRepository = socialUserRepository;
+        this.roleService = roleService;
+    }
+
+    @Override
+    public void registerOrLogin(User facebookUser) {
+        String email = facebookUser.getEmail();
+        SocialUser socialUser = this.socialUserRepository.findByUsername(email);
+        if (socialUser == null) {
+            socialUser = registerUser(email);
+        }
+
+        loginUser(socialUser);
+    }
+
+    private SocialUser registerUser(String email) {
+        SocialUser user = new SocialUser();
+        user.setUsername(email);
+        user.setProvider("FACEBOOK");
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+        user.setEnabled(true);
+        user.addRole(this.roleService.getDefaultRole());
+        this.socialUserRepository.save(user);
+        return user;
+    }
+
+    private void loginUser(SocialUser socialUser) {
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(socialUser.getUsername(), null, socialUser.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+}
