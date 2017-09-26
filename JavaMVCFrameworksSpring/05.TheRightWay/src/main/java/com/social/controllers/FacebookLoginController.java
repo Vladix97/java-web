@@ -2,6 +2,7 @@ package com.social.controllers;
 
 import com.social.services.SocialUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.social.connect.ConnectionKey;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.facebook.api.*;
 import org.springframework.stereotype.Controller;
@@ -32,11 +33,14 @@ public class FacebookLoginController {
             return "redirect:/connect/facebook";
         }
 
-        String userKey = this.connectionRepository.findPrimaryConnection(Facebook.class).getKey().getProviderUserId();
+        ConnectionKey connectionKey = this.connectionRepository.findPrimaryConnection(Facebook.class).getKey();
 
+        String userKey = this.connectionRepository.findPrimaryConnection(Facebook.class).getKey().getProviderUserId();
         String [] fields = { "id", "email" };
         User facebookUser = this.facebook.fetchObject(userKey, User.class, fields);
+
         this.socialUserService.registerOrLogin(facebookUser);
+//        this.connectionRepository.removeConnection(connectionKey); <-- ???
         return "redirect:/";
     }
 }

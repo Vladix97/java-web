@@ -1,6 +1,7 @@
 package com.social.services;
 
 import com.social.entities.Bike;
+import com.social.exceptions.BikeNotFoundException;
 import com.social.models.viewModels.BikeViewModel;
 import com.social.repositories.BikeRepository;
 import org.modelmapper.ModelMapper;
@@ -31,6 +32,10 @@ public class BikeServiceImpl implements BikeService {
     @Override
     public BikeViewModel findById(long id) {
         Bike one = this.bikeRepository.findOne(id);
+        if (one == null) {
+            throw new BikeNotFoundException();
+        }
+
         return this.modelMapper.map(one, BikeViewModel.class);
     }
 

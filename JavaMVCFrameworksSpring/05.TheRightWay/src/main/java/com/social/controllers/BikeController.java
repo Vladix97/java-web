@@ -1,5 +1,6 @@
 package com.social.controllers;
 
+import com.social.exceptions.BikeNotFoundException;
 import com.social.models.viewModels.BikeViewModel;
 import com.social.services.BikeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -37,5 +39,10 @@ public class BikeController {
         BikeViewModel bikeViewModel = this.bikeService.findById(id);
         model.addAttribute("bike", bikeViewModel);
         return "bike-show";
+    }
+
+    @ExceptionHandler(BikeNotFoundException.class)
+    public String catchBikeNotFoundException(){
+        return "exceptions/bike-not-found";
     }
 }
