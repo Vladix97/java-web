@@ -33,7 +33,7 @@ public class FacebookLoginController {
             return "redirect:/connect/facebook";
         }
 
-        ConnectionKey connectionKey = this.connectionRepository.findPrimaryConnection(Facebook.class).getKey();
+//        ConnectionKey connectionKey = this.connectionRepository.findPrimaryConnection(Facebook.class).getKey();
 
         String userKey = this.connectionRepository.findPrimaryConnection(Facebook.class).getKey().getProviderUserId();
         String [] fields = { "id", "email" };

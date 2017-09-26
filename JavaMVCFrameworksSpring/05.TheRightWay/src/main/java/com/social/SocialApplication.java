@@ -23,3 +23,4 @@ public class SocialApplication {
         return new BCryptPasswordEncoder();
     }
 }
+
