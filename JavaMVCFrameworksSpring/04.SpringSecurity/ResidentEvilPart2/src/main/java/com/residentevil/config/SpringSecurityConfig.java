@@ -34,13 +34,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                     .authorizeRequests()
-                    .antMatchers("/", "/login", "/register", "/bootstrap/**", "/jquery/**").permitAll()
+                    .antMatchers("/", "/register", "/bootstrap/**", "/jquery/**").permitAll()
 //                    .antMatchers("/viruses/**").access("hasRole('ADMIN') or hasRole('CHEMIST')")
 //                    .antMatchers("/cures/**").access("hasRole('ADMIN') or hasRole('MEDIC')")
 //                    .antMatchers("/users").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 .and()
-                    .formLogin().permitAll()
+                    .formLogin().loginPage("/login").permitAll()
                     .usernameParameter("username")
                     .passwordParameter("password")
 //                .and()
