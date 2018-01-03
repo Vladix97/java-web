@@ -1,2 +1,2 @@
 # java-web
-SoftUni's Java Web Course
+SoftUni's Java Web
