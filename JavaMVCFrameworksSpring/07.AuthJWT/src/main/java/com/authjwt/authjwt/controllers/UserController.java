@@ -1,59 +1,51 @@
 package com.authjwt.authjwt.controllers;
 
-import com.authjwt.authjwt.models.view_models.User;
-import com.authjwt.authjwt.security.JWTTokenUtil;
+import com.authjwt.authjwt.models.binding_models.RegisterUser;
+import com.authjwt.authjwt.models.view_models.ViewUser;
+import com.authjwt.authjwt.security.JwtTokenUtil;
 import com.authjwt.authjwt.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class UserController {
 
-    private static final List<User> persons;
-
-    static {
-        persons = new ArrayList<>();
-        persons.add(new User("Hello", "World"));
-        persons.add(new User("Foo", "Bar"));
-    }
-
     @Value("${jwt.header}")
     private String tokenHeader;
 
-    @Autowired
-    private JWTTokenUtil jwtTokenUtil;
+    private final UserService userService;
+
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private UserService userService;
-
-    @RequestMapping(path = "/persons", method = RequestMethod.GET)
-    public static List<User> getPersons() {
-        return persons;
+    private UserController(UserService userService, JwtTokenUtil jwtTokenUtil) {
+        this.userService = userService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
-    @RequestMapping(path = "/persons/{name}", method = RequestMethod.GET)
-    public static User getPerson(@PathVariable("name") String name) {
-        return persons.stream()
-                .filter(person -> name.equalsIgnoreCase(person.getName()))
-                .findAny().orElse(null);
+    @RequestMapping(path = "/register", method = RequestMethod.POST)
+    public ResponseEntity<?> register(@RequestBody RegisterUser registerUser) {
+        try {
+            this.userService.register(registerUser);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "user", method = RequestMethod.GET)
-    public UserDetails getAuthenticatedUser(HttpServletRequest request) {
-        String token = request.getHeader(tokenHeader).substring(7);
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public ResponseEntity<ViewUser> getMyProfile(HttpServletRequest request) {
+        String token = request.getHeader(this.tokenHeader).substring(7);
+
         String username = this.jwtTokenUtil.getUsernameFromToken(token);
-        UserDetails user = this.userService.loadUserByUsername(username);
-        return user;
-    }
 
+        ViewUser viewUser = this.userService.getUserData(username);
+        return new ResponseEntity<>(viewUser, HttpStatus.OK);
+    }
 }

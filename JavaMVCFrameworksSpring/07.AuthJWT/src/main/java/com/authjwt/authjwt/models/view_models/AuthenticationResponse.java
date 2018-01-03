@@ -2,13 +2,17 @@ package com.authjwt.authjwt.models.view_models;
 
 public class AuthenticationResponse {
 
-    private final String token;
+    private String token;
 
     public AuthenticationResponse(String token) {
-        this.token = token;
+        this.setToken(token);
     }
 
     public String getToken() {
         return this.token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

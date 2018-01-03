@@ -9,11 +9,6 @@ public class LoginUser {
         super();
     }
 
-    public LoginUser(String username, String password) {
-        this.setUsername(username);
-        this.setPassword(password);
-    }
-
     public String getUsername() {
         return this.username;
     }

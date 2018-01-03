@@ -1,8 +1,9 @@
 package com.authjwt.authjwt.config;
 
-import com.authjwt.authjwt.security.JWTAuthenticationTokenFilter;
+import com.authjwt.authjwt.security.JwtAuthenticationEntryPoint;
+import com.authjwt.authjwt.security.JwtAuthenticationTokenFilter;
+import com.authjwt.authjwt.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,8 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -21,42 +20,45 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    @Autowired
-//    private JwtAuthenticationEntryPoint unauthorizedHandler;
+    private final UserService userService;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final JwtAuthenticationEntryPoint unauthorizedHandler;
+
+    private final JwtAuthenticationTokenFilter authenticationTokenFilterBean;
 
     @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder
-                .userDetailsService(this.userDetailsService)
-                .passwordEncoder(passwordEncoder());
+    public WebSecurityConfig(
+            UserService userService,
+            PasswordEncoder passwordEncoder,
+            JwtAuthenticationEntryPoint unauthorizedHandler,
+            JwtAuthenticationTokenFilter authenticationTokenFilterBean) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.unauthorizedHandler = unauthorizedHandler;
+        this.authenticationTokenFilterBean = authenticationTokenFilterBean;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public JWTAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
-        return new JWTAuthenticationTokenFilter();
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(this.userService).passwordEncoder(this.passwordEncoder);
     }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+
                 // we don't need CSRF because our token is invulnerable
                 .csrf().disable()
 
-//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                // returning 401 when unauthorized
+                .exceptionHandling().authenticationEntryPoint(this.unauthorizedHandler).and()
 
                 // don't create session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
                 .authorizeRequests()
-                //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                 // allow anonymous resource requests
                 .antMatchers(
@@ -68,12 +70,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
-                .antMatchers("/auth/**").permitAll()
+
+                .antMatchers("/register", "/auth").permitAll()
+
+                .antMatchers("/users").hasRole("ADMIN")
+
                 .anyRequest().authenticated();
 
-        // Custom JWT based security filter
+        // JWT based security filter
         httpSecurity
-                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(this.authenticationTokenFilterBean, UsernamePasswordAuthenticationFilter.class);
 
         // disable page caching
         httpSecurity.headers().cacheControl();

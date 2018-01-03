@@ -1,27 +1,33 @@
 package com.authjwt.authjwt.entities;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
 
-    private Long id;
+    private long id;
 
     private String username;
 
     private String password;
 
-    private Boolean isAccountNonExpired;
+    private String firstName;
 
-    private Boolean isAccountNonLocked;
+    private String lastName;
 
-    private Boolean isCredentialsNonExpired;
+    private boolean isAccountNonExpired;
 
-    private Boolean isEnabled;
+    private boolean isAccountNonLocked;
+
+    private boolean isCredentialsNonExpired;
+
+    private boolean isEnabled;
 
     private Set<Role> authorities;
 
@@ -32,11 +38,11 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    public Long getId() {
+    public long getId() {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -60,14 +66,32 @@ public class User implements UserDetails {
         this.username = username;
     }
 
+    @Column(name = "first_name")
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Column(name = "last_name")
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     @Override
     @Column(name = "is_account_non_expired")
     public boolean isAccountNonExpired() {
         return this.isAccountNonExpired;
     }
 
-    public void setAccountNonExpired(Boolean accountNonExpired) {
-        isAccountNonExpired = accountNonExpired;
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        this.isAccountNonExpired = accountNonExpired;
     }
 
     @Override
@@ -76,8 +100,8 @@ public class User implements UserDetails {
         return this.isAccountNonLocked;
     }
 
-    public void setAccountNonLocked(Boolean accountNonLocked) {
-        isAccountNonLocked = accountNonLocked;
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.isAccountNonLocked = accountNonLocked;
     }
 
     @Override
@@ -86,8 +110,8 @@ public class User implements UserDetails {
         return this.isCredentialsNonExpired;
     }
 
-    public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
-        isCredentialsNonExpired = credentialsNonExpired;
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        this.isCredentialsNonExpired = credentialsNonExpired;
     }
 
     @Override
@@ -96,8 +120,8 @@ public class User implements UserDetails {
         return this.isEnabled;
     }
 
-    public void setEnabled(Boolean enabled) {
-        isEnabled = enabled;
+    public void setEnabled(boolean enabled) {
+        this.isEnabled = enabled;
     }
 
     @Override

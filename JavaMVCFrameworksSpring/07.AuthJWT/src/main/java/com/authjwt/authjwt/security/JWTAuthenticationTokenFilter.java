@@ -18,15 +18,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JWTAuthenticationTokenFilter extends OncePerRequestFilter {
+public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private JWTTokenUtil jwtTokenUtil;
+    private UserService userService;
 
     @Autowired
-    private UserService userService;
+    private JwtTokenUtil jwtTokenUtil;
 
     @Value("${jwt.header}")
     private String tokenHeader;
@@ -37,14 +37,17 @@ public class JWTAuthenticationTokenFilter extends OncePerRequestFilter {
 
         String username = null;
         String authToken = null;
+
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
             authToken = requestHeader.substring(7);
             try {
                 username = this.jwtTokenUtil.getUsernameFromToken(authToken);
             } catch (IllegalArgumentException e) {
-                this.logger.error("an error occured during getting username from token", e);
+                this.logger.error("an error occurred during getting username from token", e);
             } catch (ExpiredJwtException e) {
                 this.logger.warn("the token is expired and not valid anymore", e);
+            } catch (Exception e) {
+                this.logger.warn("invalid token", e);
             }
         } else {
             this.logger.warn("couldn't find bearer string, will ignore the header");
@@ -53,14 +56,13 @@ public class JWTAuthenticationTokenFilter extends OncePerRequestFilter {
         this.logger.info("checking authentication for user " + username);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // It is not compelling necessary to load the use details from the database. You could also store the information
-            // in the token and read it from it. It's up to you ;)
-            UserDetails userDetails = this.userService.loadUserByUsername(username);
+            UserDetails user = this.userService.loadUserByUsername(username);
 
-            // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
-            // the database compellingly. Again it's up to you ;)
-            if (this.jwtTokenUtil.validateToken(authToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            // Validating token's user and expiration time
+            if (this.jwtTokenUtil.validateToken(authToken, user)) {
+
+                // Creating session for the current user
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 this.logger.info("authenticated user " + username + ", setting security context");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -69,5 +71,4 @@ public class JWTAuthenticationTokenFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-
 }
