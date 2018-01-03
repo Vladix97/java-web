@@ -1,2 +1,2 @@
 # java-web
-SoftUni's Java Web Course 2017
+SoftUni's Java Web Course
